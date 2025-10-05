@@ -1,7 +1,7 @@
 ---
 title: RLHF Algorithms — PPO, GRPO, GSPO
 layout: default
-permalink: /LLM-1/rlhf-ppo-grpo-gspo/
+permalink: /LLM/rlhf-ppo-grpo-gspo/
 ---
 
 # RLHF Algorithms: PPO, GRPO, GSPO — Differences, Trade-offs, and Use Cases
