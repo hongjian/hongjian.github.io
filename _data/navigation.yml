@@ -1,0 +1,7 @@
+main:
+  - title: "Home"
+    url: /
+  - title: "LLM Algorithms"
+    url: /LLM/
+  - title: "About"
+    url: /about/

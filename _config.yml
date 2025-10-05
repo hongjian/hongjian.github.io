@@ -1,7 +1,57 @@
 title: Hongjian
-theme: minima
+description: Notes on LLMs and related research
+url: https://hongjian.github.io
+baseurl: ""          # keep empty on user sites
 
+# Theme (no Gemfile needed for GitHub Pages)
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-include-cache
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-paginate
+
+paginate: 6
+paginate_path: /page:num/
+
+# Markdown + math
 markdown: kramdown
 kramdown:
   input: GFM
   math_engine: mathjax
+
+# UI
+minimal_mistakes_skin: "default"   # "air", "contrast", "dark", etc.
+
+# Author (shows on posts)
+author:
+  name: Hongjian
+  avatar: /assets/avatar.png       # optional
+  bio: Scientist & Engineer in AI. Notes on LLMs and related research.
+  links:
+    - label: Twitter/X
+      icon: "fab fa-fw fa-twitter"
+      url: https://twitter.com/hongjian_zou
+    - label: GitHub
+      icon: "fab fa-fw fa-github"
+      url: https://github.com/hongjian
+
+# Defaults so every post has nice layout + math
+defaults:
+  - scope: { path: "" , type: posts }
+    values:
+      layout: single
+      classes: wide
+      author_profile: true
+      read_time: true
+      comments: false
+      share: true
+      related: true
+      mathjax: true
+
+# Collections (leave pages as usual)
+collections:
+  posts:
+    output: true
