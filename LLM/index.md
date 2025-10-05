@@ -51,15 +51,15 @@ Three key steps that follow the large-scale pretraining of an LLM from paper of 
 
 step 1 is SFT , step 2 and step 3 is RLHF. 
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/0b30eb31-c952-4741-b8e0-090d7db1b412.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_instructgpt_pipeline.png)
 
 Full four stages of training GPT assistant from talk “The state of GPT” by Andrew Karpathy:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_state_of_gpt.png)
 
 A illustration of RLHF from  [https://huggingface.co/blog/rlhf](https://huggingface.co/blog/rlhf)
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%201.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_1.png)
 
 In the RLHF stage, two key factors are considered when updating the **policy model** (also referred to as the *actor*). The first is the **evaluation of the model’s response** to a given prompt, typically provided by a reward model trained on human preferences. The second is the **degree of divergence** between the updated policy and the original reference model, which is controlled to prevent the policy from drifting too far from its pretrained behavior.
 
@@ -100,17 +100,17 @@ Classic policy gradient methods perform only one update per data sample, often c
 
 **Trust Region Policy Optimization (TRPO)** stabilizes updates by constraining the step size of policy updates, that is, constraining KL divergence between the new and old policies. 
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%202.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_2.png)
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%203.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_3.png)
 
 However, TRPO requires solving a constrained, second-order problem, making it computationally expensive and difficult to implement in practice.
 
 **Proximal Policy Optimization (PPO)**, proposed by Schulman et al. in 2017, simplifies this process. Instead of enforcing a hard trust-region constraint, PPO introduces a **clipped surrogate objective,** allowing multiple epochs of mini-batch updates while preventing excessively large policy shifts.
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%204.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_4.png)
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%203.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_3.png)
 
 In other words, PPO improves both **stability** and **sample efficiency**. Intuitively, *PPO acts like a seatbelt for policy training — it allows the model to adjust itself freely, but prevents sudden, unsafe changes.*
 
@@ -118,7 +118,7 @@ In other words, PPO improves both **stability** and **sample efficiency**. Intui
 
 In LLM RLHF, we view each decoding step as an RL step: the state is the prompt plus the previously generated tokens $s_t=(x,y_{<t})$, and the action is the next token $a_t=y_t$. Under this mapping, the length-normalized PPO objective is:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%205.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_5.png)
 
 𝜋𝜃 and 𝜋𝜃𝑜𝑙𝑑  are the current and old policy models,
 
@@ -130,13 +130,13 @@ In LLM RLHF, we view each decoding step as an RL step: the state is the prompt p
 
 To curb reward model gaming and preserve pretrained behavior, a per-token KL penalty from a reference model  $\pi_{\text{ref}}$  is often added in the reward at each token.
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%206.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_6.png)
 
 **Advantage estimation (GAE)**
 
 PPO typically uses **Generalized Advantage Estimation** to balance bias–variance:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%207.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_7.png)
 
 **Why PPO became the workhorse**
 
@@ -179,11 +179,11 @@ GRPO removes the critic entirely. Instead of relying on a learned value function
 - In PPO, the advantage comes from the critic’s value estimates, which serve as a **global, uniform baseline**.
 - In GRPO, the advantage is based on **relative comparisons within the sampled group**, making it a **local, context-dependent baseline**.
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/de5a9985-0d9d-49aa-af1f-5d7a9d6cc1bb.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_ppo_grpo.png)
 
 GRPO’s objective is:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%208.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_8.png)
 
 **GRPO differs from PPO in two principal ways:** 
 
@@ -198,7 +198,7 @@ Thus, **advantages are group-relative and token-constant per response**, removin
 
 GRPO estimate the KL divergence using a unbiased estimator: 
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%209.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_9.png)
 
 ## 3.3 Pros: efficient, stable in practice
 
@@ -268,15 +268,15 @@ This ratio reflects how much the updated policy $\pi_\theta$ diverges from the o
 
 The **GSPO optimization objective** can be written as:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%2010.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_10.png)
 
 The importance ratio $s_i(θ)$ is based on sequence likelihood:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%2011.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_11.png)
 
  $\hat{A_i}$  denotes the group-based advantage estimation:
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%2012.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_12.png)
 
 ## 4.3 When to consider GSPO: high-variance or unstable training regimes
 
@@ -296,7 +296,7 @@ By aligning optimization at the sequence level, GSPO provides a more robust appr
 
 Kimi also trains **large-scale Mixture-of-Experts (MoE) models**, which makes its reinforcement learning strategy particularly interesting to compare with approaches from DeepSeek (GRPO) and Qwen (GSPO).
 
-![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image%2013.png)
+![image.png](RLHF-PPO-GRPO-GSPO—274b2305df2180abbe2bd1be8005746b/image_13.png)
 
 **Kimi K2’s RL algorithm** combines elements of both worlds: it adopts a **relative baseline** similar to GRPO, while introducing an **explicit KL regularization term** reminiscent of PPO/GSPO. This hybrid formulation is designed to balance efficiency with stability at MoE scale.
 
